@@ -1,0 +1,50 @@
+---
+title: "Learn Plotting"
+author: "SamuelChan"
+date: "4/18/2020"
+output: html_document
+---
+
+## My Exercise
+
+`summary` prints a summary of the dataset, which gives me information on the minimum, maximum, the different quantiles and the average (mean): 
+
+```{r cars}
+summary(cars)
+```
+I can use `max()` to obtain the maximum value in my data:
+
+```{r maxvalue}
+maxv <- max(cars)
+print(maxv)
+```
+
+The maximum value in our data is `r maxv`.
+
+```{r experiment}
+# sample 5 numbers from 1 to 120
+sample(1:maxv, 5)
+```
+
+```{python lists}
+# create a list
+list(i*2 for i in [2,4,6])
+```
+
+
+## Including Plots
+`volcano` is another built-in dataset, and we can use the `image()` function to create a colored grid corresponding to the values in this dataset.
+```{r}
+image(volcano)
+```
+
+You can also render plot with a main title, using `main`:
+
+```{r pressure, echo=FALSE}
+plot(pressure, main="A non-descriptive title")
+```
+
+- Useful **bookmark 1**: Find more tips on using R Markdown on the [full tutorial](https://finetut.com/lessons/introduction-to-rmarkdown-r-notebook)!  
+- Useful **bookmark 2**: Find more tips on working with Markdown on the [full tutorial](https://finetut.com/lessons/working-with-markdown-document/)!  
+
+

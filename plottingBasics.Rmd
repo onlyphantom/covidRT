@@ -1,0 +1,82 @@
+---
+title: "plottingBasics"
+author: "Samuel"
+date: "4/20/2020"
+output: html_document
+---
+
+```{r reading-data}
+covid <- read.csv("data_input/covid_clean.csv")
+covid$date <- as.Date(covid$date)
+covid <- covid[order(covid$date), 2:6]
+str(covid)
+```
+
+```{r inspect}
+head(covid)
+```
+
+
+
+```{r}
+us_cases <- subset(covid, country=="Germany")
+plot(x=us_cases$date, y=us_cases$confirmed)
+```
+
+```{r}
+plot(x=us_cases$date, y=us_cases$confirmed)
+```
+
+```{r}
+plot(x=us_cases$date, y=us_cases$confirmed, 
+     pch=19, 
+     cex=0.3, 
+     main="Confirmed Cases vs Recovery in the US",
+     sub="Data as of 17th April 2020",
+     xlab="Date", ylab="")
+```
+
+```{r}
+plot(us_cases$date, 
+     # use log values instead
+     log(us_cases$confirmed), 
+     type="l", 
+     col="darkgreen", 
+     # box type
+     bty="l", 
+     # linetype
+     lty="dashed")
+```
+
+```{r}
+plot(us_cases$date, us_cases$confirmed, 
+     pch=19, 
+     cex=0.3, 
+     main="Confirmed Cases vs Deaths in the US",
+     sub="Data as of 17th April 2020",
+     las=1,
+     xlab="", ylab="",
+     type="l", 
+     col="darkgreen", lty="solid")
+
+lines(us_cases$date, us_cases$deaths, col="cornsilk3", lwd=2, lty="dashed")
+```
+
+
+```{r}
+options(scipen=1)
+plot(us_cases$date, us_cases$confirmed, 
+     pch=19, 
+     cex=0.3, 
+     main="Confirmed Cases vs Recovery in the US",
+     sub="Data as of 17th April 2020",
+     las=1,
+     xlab="", ylab="")
+lines(us_cases$date, us_cases$confirmed, col="cornsilk3", lwd=2)
+lines(us_cases$date, us_cases$recovered, col="lightblue", lwd=2)
+lines(us_cases$date, us_cases$deaths, col="lightpink", lwd=2)
+legend("top", fill=c("cornsilk3", "lightblue", "lightpink"), legend=c("confirmed", "recovered", "deaths"))
+```
+
+
+
