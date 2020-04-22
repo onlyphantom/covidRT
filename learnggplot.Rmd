@@ -1,0 +1,120 @@
+---
+title: "learnggplot"
+author: "Samuel"
+date: "4/21/2020"
+output: html_document
+---
+
+```{r}
+options(scipen=1)
+library(ggplot2)
+covid <- read.csv("data_input/covid_clean.csv")
+covid$date <- as.Date(covid$date)
+covid <- covid[order(covid$date), 2:6]
+northam <- subset(covid, country=="US" | country=="Canada")
+```
+
+
+
+
+
+```{r}
+euro5 <- subset(covid, country == "Germany" | 
+                  country=="Italy" | 
+                  country == "Spain" |
+                  country == "France" |
+                  country == "United Kingdom")
+euro5$country <- factor(euro5$country)
+aggregate(deaths ~ country, euro5, sum)
+```
+
+```{r}
+covid[covid$country == "Germany" & 
+             covid$date >= as.Date("2020-04-15") |
+             covid$recovered > 74000, ]
+```
+
+
+```{r}
+euro5 <- subset(covid, country == "Germany" | 
+                  country=="Italy" | 
+                  country == "Spain" |
+                  country == "France" |
+                  country == "United Kingdom")
+euro5$country <- factor(euro5$country)
+aggregate(deaths ~ country, euro5, sum)
+```
+
+```{r}
+euro5countries <- c("Germany", "Italy", "Spain", "France", "United Kingdom")
+euro5 <- subset(covid, country %in% euro5countries)
+euro5$country <- factor(euro5$country)
+```
+
+
+```{r}
+ggplot(data=euro5, mapping=aes(x=date, y=deaths, color=country)) +
+  geom_line()
+```
+```{r}
+plot1 <- ggplot(data=euro5, mapping=aes(x=date, y=deaths, color=country))
+plot1
+```
+```{r}
+plot1 + geom_boxplot()
+```
+
+```{r}
+plot1 <- ggplot(data=euro5, mapping=aes(x=date, y=deaths, color=country))
+plot1 + 
+  geom_line() + 
+  geom_point() 
+```
+
+```{r}
+plot1 <- ggplot(data=euro5)
+plot1 + 
+  geom_line(mapping=aes(x=date, y=deaths, color=country)) + 
+  geom_point(mapping=aes(x=date, y=deaths), size=0.5)
+```
+```{r}
+america <- subset(covid, country=="US")
+ggplot(data=america) +
+  geom_line(mapping=aes(x=date, y=recovered), 
+            col="darkgreen", 
+            linetype="dashed",
+            )
+```
+
+```{r}
+plot1 <- ggplot(data=euro5, aes(x=date, y=deaths, color=country), size=1)
+plot1 + 
+  geom_line(aes(linetype=country), color="black", size=0.5) + 
+  geom_point(size=0.3)
+```
+
+
+```{r}
+ggplot(data=covid[covid$confirmed > 20000, ])+ 
+  geom_dotplot(mapping=aes(x=deaths), binwidth=400, stackdir="center", position="dodge")
+```
+```{r}
+newc <- subset(covid, confirmed > 10000 & date == as.Date("2020-04-17"))
+newc$country <- factor(newc$country)
+newc
+```
+
+```{r}
+library(reshape2)
+melted <- melt(newc[,2:5])
+tail(melted)
+```
+
+```{r}
+ggplot(data=melted, aes(x=country, y=value, fill=variable)) + 
+  geom_col(position="dodge") +
+  coord_flip()
+```
+
+
+

@@ -1,6 +1,6 @@
 ---
 title: "Learn Plotting"
-author: "SamuelChan"
+author: "Samuel"
 date: "4/18/2020"
 output: html_document
 ---

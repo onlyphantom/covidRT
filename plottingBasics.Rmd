@@ -17,9 +17,8 @@ head(covid)
 ```
 
 
-
 ```{r}
-us_cases <- subset(covid, country=="Germany")
+us_cases <- subset(covid, country=="US")
 plot(x=us_cases$date, y=us_cases$confirmed)
 ```
 
