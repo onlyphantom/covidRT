@@ -8,6 +8,8 @@ output: html_document
 ```{r}
 options(scipen=1)
 library(ggplot2)
+library(extrafont)
+library(ggthemes)
 covid <- read.csv("data_input/covid_clean.csv")
 covid$date <- as.Date(covid$date)
 covid <- covid[order(covid$date), 2:6]
@@ -86,34 +88,147 @@ ggplot(data=america) +
             )
 ```
 
+
 ```{r}
 plot1 <- ggplot(data=euro5, aes(x=date, y=deaths, color=country), size=1)
 plot1 + 
   geom_line(aes(linetype=country), color="black", size=0.5) + 
   geom_point(size=0.3)
 ```
+```{r}
+ggplot(data=covid[covid$confirmed > 20000, ], aes(x=deaths))+ 
+  geom_histogram(binwidth=1000)
+```
+
+```{r}
+ggplot(data=covid[covid$confirmed > 20000, ], aes(x=deaths))+ 
+  geom_freqpoly(binwidth=300)
+```
+
+
+
+```{r}
+ggplot(data=covid[covid$confirmed > 20000, ], aes(x=deaths))+ 
+  geom_histogram(binwidth=1000, fill="navy") +
+  geom_freqpoly(binwidth=1000, col="purple")
+```
+
+
+```{r}
+x <- covid[covid$confirmed > 20000, ]
+x$cumudeaths<- x$deaths > x$recovered
+  
+ggplot(data=x)+ 
+  geom_dotplot(mapping=aes(x=deaths, fill=cumudeaths, color=cumudeaths), 
+               binwidth=400, 
+               stackdir="center",
+               dotsize=0.7, 
+               stackratio = 1.4,
+               show.legend = FALSE, position="dodge") +
+  scale_color_manual(values=c("azure4", "firebrick4"), aesthetics = c("colour", "fill")) 
+```
 
 
 ```{r}
 ggplot(data=covid[covid$confirmed > 20000, ])+ 
-  geom_dotplot(mapping=aes(x=deaths), binwidth=400, stackdir="center", position="dodge")
+  geom_dotplot(mapping=aes(x=deaths), binwidth=400, stackdir="center")
 ```
 ```{r}
 newc <- subset(covid, confirmed > 10000 & date == as.Date("2020-04-17"))
-newc$country <- factor(newc$country)
-newc
+tail(newc)
 ```
 
 ```{r}
 library(reshape2)
-melted <- melt(newc[,2:5])
+melted <- melt(newc[,2:5], id="country")
 tail(melted)
 ```
 
 ```{r}
-ggplot(data=melted, aes(x=country, y=value, fill=variable)) + 
-  geom_col(position="dodge") +
-  coord_flip()
+table(melted$variable)
+```
+
+```{r}
+ggplot(data=melted, aes(x=value, y=country, fill=variable)) + 
+  geom_col() 
+```
+
+
+```{r}
+ggplot(data=melted, aes(x=value, y=country, fill=variable)) + 
+  geom_col() +
+  labs(title="Covid-19 Pandemic, as of 17th April",
+       caption="Source: JHU CSSE, graph by @NoahTheDev")
+```
+
+```{r}
+ggplot(data=melted, aes(x=value, y=country, fill=variable)) + 
+  geom_col() +
+  geom_vline(xintercept=mean(melted[melted$variable=="confirmed","value"]),
+             color="maroon", linetype="dashed") +
+  labs(title="Covid-19 Pandemic, 2020", 
+       subtitle="--- line: Average of confirmed cases",
+       caption="Source: JHU CSSE, graph by Finetut.com", 
+       x="", y="") +
+  theme_linedraw() +
+  theme(
+    plot.title = element_text(face = "bold",size = 16),
+    plot.subtitle = element_text(face = "italic",color = "gray55"),
+    text = element_text(family=".New York"),
+    legend.text = element_text(size=6),
+    legend.title = element_blank(),
+    legend.key.size = unit(0.5, "line"),
+    legend.position = "bottom"
+  )
+```
+```{r}
+ggplot(data=melted, aes(x=value, y=country, fill=variable)) + 
+  geom_col() +
+  geom_vline(xintercept=mean(melted[melted$variable=="confirmed","value"]),
+             color="black", linetype="dotted") +
+  labs(title="Covid-19 Pandemic, 2020", 
+       subtitle="--- line: Average of confirmed cases",
+       caption="Source: JHU CSSE, graph by Finetut.com", 
+       x="", y="") +
+  theme_clean() +
+  theme(
+    plot.title = element_text(face = "bold",size = 16),
+    plot.subtitle = element_text(face = "italic",color = "gray55"),
+    text = element_text(family=".New York"),
+    legend.text = element_text(size=6),
+    legend.title = element_blank(),
+    legend.key.size = unit(0.5, "line"),
+    legend.position = "bottom"
+  )
+```
+
+
+
+
+```{r}
+ggplot(data=melted, aes(x=value, y=country, fill=variable)) + 
+  geom_col() +
+  geom_vline(xintercept=mean(melted[melted$variable=="confirmed","value"]),
+             color="grey99", linetype="dashed") +
+  labs(title="Covid-19 Pandemic, 2020", 
+       subtitle="--- line: Average of confirmed cases",
+       caption="Source: JHU CSSE, graph by Finetut.com", 
+       x="", y="") +
+  scale_color_manual(values=c("goldenrod2", "firebrick3", "lightblue"), aesthetics = c("colour", "fill")) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold",size = 16, color="gray77"),
+    plot.subtitle = element_text(face = "italic",color = "gray99"),
+    text = element_text(family=".New York", color="gray77"),
+    legend.text = element_text(size=6),
+    legend.title = element_blank(),
+    legend.key.size = unit(0.5, "line"),
+    legend.position = c(0.9, 0.1),
+    plot.background = element_rect(fill="black"),
+    axis.text = element_text(color="gray77"),
+    panel.grid.minor = element_blank(),
+    panel.grid.major = element_line(color="gray33")
+  )
 ```
 
 

@@ -8,6 +8,8 @@ The repo contains code references and materials used in a 11-part tutorial serie
 
 Learners are expected to develop their own dashboard, and deploy to the free shinyapps.io hosting service. 
 
+![](preview.png)
+
 ## Other Useful Repositories
 
 1. DarkerShiny, [A Shiny web app template using a dark theme with support for custom CSS](https://github.com/onlyphantom/darkershiny)
