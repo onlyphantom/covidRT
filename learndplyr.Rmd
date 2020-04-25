@@ -1,0 +1,109 @@
+---
+title: "learndplyr"
+author: "Samuel"
+date: "4/24/2020"
+output: html_document
+---
+
+```{r}
+library(dplyr)
+library(tidyr)
+confirmed_w <- read.csv("data_input/confirmed_global.csv")
+tail(confirmed_w)
+```
+
+```{r}
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  gather(key="date", value="Value", -Country.Region)
+```
+
+
+
+```{r}
+confirmed_sel <- confirmed_w[,-c(1,3,4)]
+melted <- reshape2::melt(confirmed_sel)
+head(melted)
+```
+
+```{r}
+pivot_longer(confirmed_w[,c(2, 5:ncol(confirmed_w))], -Country.Region)
+```
+
+
+```{r}
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  pivot_longer(-Country.Region, names_to = "date", values_to = "value") %>% 
+  head(4)
+```
+
+```{r}
+library(ggplot2)
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  pivot_longer(-Country.Region, names_to = "date", values_to = "value") %>% 
+  head(300) %>% 
+  ggplot(aes(x=value)) + geom_histogram()
+```
+```{r}
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  pivot_longer(-Country.Region, names_to = "date", values_to = "Value") %>% 
+  dim()
+```
+
+```{r}
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  pivot_longer(-"Country.Region", names_to = "date", values_to = "Value") %>% 
+  group_by(Country.Region, date) %>% 
+  summarise("Value"=sum(Value)) %>% 
+  dim()
+```
+
+```{r}
+confirmed_w %>%
+  select(-Lat, -Long) %>% 
+  pivot_longer(-c(Country.Region, Province.State), names_to = "date", values_to = "Value") %>% 
+  filter(Country.Region %in% c('Australia', 'Canada') & date == 'X4.10.20') %>% 
+  head(10)
+```
+
+```{r}
+confirmed_w %>%
+  select(-Lat, -Long) %>% 
+  pivot_longer(-c(Country.Region, Province.State), names_to = "date", values_to = "Value") %>% 
+  filter(Country.Region %in% c('Australia', 'Canada') & date == 'X4.10.20') %>% 
+  group_by(Country.Region) %>% 
+  summarise("Avg"=mean(Value), "Sum"=sum(Value)) %>% 
+  ungroup()
+```
+
+
+```{r}
+confirmed_w
+```
+
+```{r}
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  pivot_longer(-"Country.Region", names_to = "date", values_to = "Value") %>% 
+  group_by(Country.Region, date) %>% 
+  summarise("Value"=sum(Value)) %>% 
+  ungroup() %>% 
+  str()
+```
+
+
+```{r}
+confirmed_w %>%
+  select(-Province.State, -Lat, -Long) %>% 
+  pivot_longer(-"Country.Region", names_to = "date", values_to = "Value") %>% 
+  group_by(Country.Region, date) %>% 
+  summarise("Value"=sum(Value)) %>% 
+  ungroup() %>% 
+  select(date, "country"=Country.Region, Value) %>% 
+  mutate(date, date=as.Date(substring(date, 2, nchar(date)),"%m.%d.%y"))
+```
+
