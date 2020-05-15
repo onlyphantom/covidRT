@@ -145,10 +145,6 @@ tail(melted)
 ```
 
 ```{r}
-table(melted$variable)
-```
-
-```{r}
 ggplot(data=melted, aes(x=value, y=country, fill=variable)) + 
   geom_col() 
 ```
@@ -201,7 +197,61 @@ ggplot(data=melted, aes(x=value, y=country, fill=variable)) +
     legend.position = "bottom"
   )
 ```
+```{r}
+or <- order(melted[melted$variable == "confirmed", "value"])
+melted$country[or]
+```
 
+```{r}
+or <- order(melted[melted$variable == "recovered", "value"])
+```
+
+```{r}
+newc <- covid[covid$date == max(covid$date, na.rm=TRUE), ]
+newc <- newc[order(newc$confirmed),]
+melted <- melt(newc[,2:5], id="country")
+
+cntToPlot <- tail(newc$country, 20)
+melted <- subset(melted, country %in% cntToPlot)
+tail(melted)
+```
+
+```{r}
+order(melted$country)
+```
+
+```{r}
+levels(melted$country)[1:length(melted$country)]
+```
+
+
+```{r}
+factor(melted$country, levels=sort(melted$country))[1]
+```
+
+
+```{r}
+or <- levels(sort(melted$country))
+ggplot(data=melted, 
+       aes(x=value, y=factor(country, levels=or), col=variable)) + 
+  geom_point(aes(size=value)) 
+```
+
+
+```{r}
+or <- levels(melted$country)
+ggplot(data=melted, 
+       aes(x=value, y=factor(country, levels=country[or]), col=variable)) + 
+  geom_point(aes(size=value)) 
+```
+
+```{r}
+or <- order(melted[melted$variable == "recovered", "value"])
+ggplot(data=melted, 
+       aes(x=value, y=factor(country, levels=country[or]), col=variable)) + 
+  geom_point(aes(size=value)) +
+  guides(size="none")
+```
 
 
 
@@ -224,7 +274,7 @@ ggplot(data=melted, aes(x=value, y=country, fill=variable)) +
     legend.title = element_blank(),
     legend.key.size = unit(0.5, "line"),
     legend.position = c(0.9, 0.1),
-    plot.background = element_rect(fill="black"),
+    plot.background = element_rect(fill="black",linetype = "blank"),
     axis.text = element_text(color="gray77"),
     panel.grid.minor = element_blank(),
     panel.grid.major = element_line(color="gray33")
